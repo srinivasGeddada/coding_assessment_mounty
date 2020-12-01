@@ -27,11 +27,19 @@ userRoute.get('/get/geo', async (req, res) => {
 //get user uso
 
 //create user
-userRoute.post('/create',async (req,res)=>{
-    const user= new User(req.body);
+userRoute.post('/create', async (req, res) => {
    try {
-       const createedUser = await user.save(user);
-       res.status(201).json(createedUser);
+
+    const isUser = await User.findOne({ mobile: req.body.mobile });
+    if (isUser) {
+        res.json("mobile Number exists")
+    } else {
+        const user = new User(req.body);
+    
+        const createedUser = await user.save(user);
+        res.status(201).json(createedUser)
+    }
+   
    } catch (error) {
        res.status(400).json(error.message);
    }
@@ -41,7 +49,7 @@ userRoute.post('/create',async (req,res)=>{
 //update user
 userRoute.patch('/update/:id', async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const user = await User.findByIdAndUpdate(req.params.id, req.body,);
         if (!user) {
             res.status(404).json("NO User found with this id")
         }
